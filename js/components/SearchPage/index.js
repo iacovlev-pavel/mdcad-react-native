@@ -16,12 +16,15 @@ import {
   List,
   ListItem,
 } from 'native-base';
+import proj4 from 'proj4';
 
 import MapPage from '../MapPage';
 import DrawBar from '../DrawBar';
 
 import { openDrawer } from '../../actions/drawer';
-import { setSearchResult, setSearchSelected } from '../../actions/search';
+import { setSearchText, setSearchResult, setSearchSelected } from '../../actions/search';
+
+proj4.defs('EPSG:4026', '+proj=tmerc +lat_0=0 +lon_0=28.4 +k=0.9999400000000001 +x_0=200000 +y_0=-5000000 +ellps=GRS80 +units=m +no_defs');
 
 const styles = {
   container: {
@@ -35,18 +38,25 @@ class SearchPage extends Component {
   };
 
   static propTypes = {
+    navigation: React.PropTypes.object,
     openDrawer: React.PropTypes.func,
+    setSearchText: React.PropTypes.func,
     setSearchResult: React.PropTypes.func,
     setSearchSelected: React.PropTypes.func,
+    searchText: React.PropTypes.string,
     searchResult: React.PropTypes.array,
-    searchSelected: React.PropTypes.any,
+    searchSelected: React.PropTypes.object,
+  };
+
+  state = {
   };
 
   paramsSerialize(params) {
     return Object.keys(params).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key])).join('&'); // eslint-disable-line prefer-template
   }
 
-  searchFetch(text) {
+  async searchFetch(text) {
+    //
     const params = {
       p_request: 'APPLICATION_PROCESS=jQuery_Auto',
       p_instance: 826170114501181,
@@ -57,41 +67,89 @@ class SearchPage extends Component {
       x03: 11,
       x04: 1,
     };
-
-    return fetch('https://www.cadastru.md/ecadastru/webinfo/wwv_flow.show', {
+    const request = await fetch('https://www.cadastru.md/ecadastru/webinfo/wwv_flow.show', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: this.paramsSerialize(params),
-    }).then(response => response.text()).then((response) => {
-      const result = [];
-      const re = /(\d+)\s:\s(.*)/g;
-      let m;
-      while ((m = re.exec(response)) !== null) { // eslint-disable-line no-cond-assign
-        if (m.index === re.lastIndex) {
-          re.lastIndex++; // eslint-disable-line no-plusplus
-        }
-        result.push({
-          key: m[1],
-          address: m[2].split(', ').reverse().join(', '),
-        });
-      }
-      return result;
     });
+    const response = await request.text();
+
+    //
+    const result = [];
+    const re = /(\d+)\s:\s(.*)/g;
+    let m;
+    while ((m = re.exec(response)) !== null) { // eslint-disable-line no-cond-assign
+      if (m.index === re.lastIndex) {
+        re.lastIndex++; // eslint-disable-line no-plusplus
+      }
+      result.push({
+        key: m[1],
+        address: m[2].split(', ').reverse().join(', '),
+      });
+    }
+    return result;
+  }
+
+  async geometryFetch(key) {
+    const params = {
+      p_request: 'APPLICATION_PROCESS=GET_OBJ_DATA',
+      p_instance: 956637105435086,
+      p_flow_id: 100,
+      p_flow_step_id: 1,
+      x01: key.substring(0, 4),
+      x02: key.substring(0, 2),
+      x03: key.substring(2, 4),
+      x04: key.substring(4, 5),
+      x05: key.substring(5, 7),
+      x06: key.substring(7, key.length),
+      x07: '',
+    };
+    const request = await fetch('https://www.cadastru.md/ecadastru/webinfo/wwv_flow.show', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: this.paramsSerialize(params),
+    });
+    const response = await request.text();
+
+    //
+    const cadastre = response.substring(10, response.length - 2).split(',').map(coordinates => coordinates.trim().split(' ').map(parseFloat));
+    const google = cadastre.map((coordinates) => {
+      const wgs84Coordinates = proj4('EPSG:4026', 'EPSG:4326', [coordinates[0], coordinates[1]]);
+      return {
+        latitude: wgs84Coordinates[1],
+        longitude: wgs84Coordinates[0],
+      };
+    });
+    google.pop();
+    return {
+      cadastre,
+      google,
+    };
   }
 
   async searchHandle(text) {
-    const searchResult = await this.searchFetch(text);
-    this.props.setSearchResult(searchResult);
+    this.props.setSearchText(text);
+    const result = await this.searchFetch(text);
+    this.props.setSearchResult(result);
   }
 
-  selectHandle(data) {
-    console.warn('selectHandle', data);
+  clear() {
+    this.searchHandle('');
+  }
+
+  async selectHandle(data) {
+    const searchSelected = { ...data };
+    searchSelected.geometry = await this.geometryFetch(data.key);
+    this.props.setSearchSelected(searchSelected);
+    this.props.navigation.navigate('MapPage');
   }
 
   render() {
-    const { searchResult } = this.props;
+    const { searchText, searchResult } = this.props;
 
     return (
       <Container style={styles.container}>
@@ -111,8 +169,9 @@ class SearchPage extends Component {
         </Header>
         <Content padder>
           <Item>
-            <Input placeholder="Adresa sau cod cadastral" onChangeText={(text) => { this.searchHandle(text); }} />
             <Icon active name="search" />
+            <Input placeholder="Adresa sau cod cadastral" onChangeText={(data) => { this.searchHandle(data); }}>{searchText}</Input>
+            <Icon button active name="backspace" onPress={() => this.clear()} />
           </Item>
           <List
             dataArray={searchResult}
@@ -136,14 +195,16 @@ class SearchPage extends Component {
 function bindAction(dispatch) {
   return {
     openDrawer: () => dispatch(openDrawer()),
+    setSearchText: data => dispatch(setSearchText(data)),
     setSearchResult: data => dispatch(setSearchResult(data)),
     setSearchSelected: data => dispatch(setSearchSelected(data)),
   };
 }
 
 const mapStateToProps = state => ({
-  searchResult: state.search.searchResult,
-  searchSelected: state.search.searchSelected,
+  searchText: state.search.text,
+  searchResult: state.search.result,
+  searchSelected: state.search.selected,
 });
 
 const SearchPageSwagger = connect(mapStateToProps, bindAction)(SearchPage);

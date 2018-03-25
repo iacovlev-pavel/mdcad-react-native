@@ -1,3 +1,11 @@
+export const SET_SEARCH_TEXT = 'SET_SEARCH_TEXT';
+export function setSearchText(payload) {
+  return {
+    type: SET_SEARCH_TEXT,
+    payload,
+  };
+}
+
 export const SET_SEARCH_RESULT = 'SET_SEARCH_RESULT';
 export function setSearchResult(payload) {
   return {

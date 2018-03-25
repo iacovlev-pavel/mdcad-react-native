@@ -4,19 +4,16 @@ import {
   Container,
   Header,
   Title,
-  Content,
-  Text,
   Button,
   Icon,
   Left,
-  Right,
   Body,
 } from 'native-base';
 import {
   StyleSheet,
   View,
 } from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, { Polygon } from 'react-native-maps';
 
 const styles = StyleSheet.create({
   container: {
@@ -38,6 +35,15 @@ class MapPage extends Component {
     header: null,
   };
 
+  static propTypes = {
+    navigation: React.PropTypes.object,
+    searchSelected: React.PropTypes.any,
+  };
+
+  state = {
+    region: null,
+  };
+
   getDelta(lat, lon, distance) {
     const oneDegreeOfLatitudeInMeters = 111.32 * 1000;
 
@@ -52,15 +58,39 @@ class MapPage extends Component {
     };
   }
 
+  searchZoom() {
+    const { searchSelected } = this.props;
+    if (!searchSelected) {
+      return;
+    }
+    this.map.fitToCoordinates(searchSelected.geometry.google, {
+      animated: false,
+    });
+  }
+
   render() {
-    const { props: { navigation } } = this;
+    const { navigation, searchSelected } = this.props;
+
+    let searchSelectedPolygon = null;
+    if (searchSelected) {
+      searchSelectedPolygon = (
+        <Polygon
+          key={searchSelected.key}
+          coordinates={searchSelected.geometry.google}
+          strokeColor="#FF0000"
+          fillColor="rgba(255,0,0,0.1)"
+          strokeWidth={2}
+        />
+      );
+    }
+
     return (
       <Container>
         <Header>
           <Left>
             <Button
               transparent
-              onPress={() => this.props.navigation.navigate('DrawerOpen')}
+              onPress={() => navigation.navigate('DrawerOpen')}
             >
               <Icon name="ios-menu" />
             </Button>
@@ -77,11 +107,24 @@ class MapPage extends Component {
             mapType="hybrid"
             style={styles.map}
             initialRegion={this.getDelta(47, 28.85, 40 * 1000)}
-          />
+            ref={(ref) => { this.map = ref; }}
+            onMapReady={() => { this.searchZoom(); }}
+          >
+            {searchSelectedPolygon}
+          </MapView>
         </View>
       </Container>
     );
   }
 }
 
-export default MapPage;
+function bindAction(/* dispatch */) {
+  return {
+  };
+}
+
+const mapStateToProps = state => ({
+  searchSelected: state.search.selected,
+});
+
+export default connect(mapStateToProps, bindAction)(MapPage);
