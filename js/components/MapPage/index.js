@@ -8,12 +8,14 @@ import {
   Icon,
   Left,
   Body,
+  Text,
+  Badge,
 } from 'native-base';
 import {
   StyleSheet,
   View,
 } from 'react-native';
-import MapView, { Polygon } from 'react-native-maps';
+import MapView, { Polygon, Marker } from 'react-native-maps';
 
 const styles = StyleSheet.create({
   container: {
@@ -27,6 +29,16 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0,
+    zIndex: 10,
+  },
+  controls: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    padding: 15,
+    zIndex: 20,
+  },
+  searchSelectedMarker: {
   },
 });
 
@@ -41,7 +53,7 @@ class MapPage extends Component {
   };
 
   state = {
-    region: null,
+    searchSelectedLabels: false,
   };
 
   getDelta(lat, lon, distance) {
@@ -69,6 +81,7 @@ class MapPage extends Component {
   }
 
   render() {
+    const { searchSelectedLabels } = this.state;
     const { navigation, searchSelected } = this.props;
 
     let searchSelectedPolygon = null;
@@ -82,6 +95,19 @@ class MapPage extends Component {
           strokeWidth={2}
         />
       );
+    }
+
+    let searchSelectedMarkers = null;
+    if (searchSelected && searchSelectedLabels) {
+      searchSelectedMarkers = searchSelected.geometry.google.map((coordinate, index) => {
+        return (
+          <Marker coordinate={coordinate} key={index} anchor={{ x: 0.5, y: 0.5 }}>
+            <Badge>
+              <Text>{index + 1}</Text>
+            </Badge>
+          </Marker>
+        );
+      });
     }
 
     return (
@@ -111,7 +137,17 @@ class MapPage extends Component {
             onMapReady={() => { this.searchZoom(); }}
           >
             {searchSelectedPolygon}
+            {searchSelectedMarkers}
           </MapView>
+          <View style={styles.controls}>
+            <Button
+              light
+              primary={searchSelectedLabels}
+              onPress={() => { this.setState({ searchSelectedLabels: !searchSelectedLabels }); }}
+            >
+              <Icon name="text" />
+            </Button>
+          </View>
         </View>
       </Container>
     );
