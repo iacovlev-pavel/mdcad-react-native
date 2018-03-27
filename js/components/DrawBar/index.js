@@ -1,18 +1,18 @@
 import React from 'react';
-import { AppRegistry, Image, TouchableOpacity, View } from 'react-native';
+import { AppRegistry, Image, View } from 'react-native';
 import {
-  Button,
   Text,
   Container,
   List,
   ListItem,
   Content,
-  Icon
 } from 'native-base';
 
 const routes = [
   { component: 'Home', title: 'Căutare' },
   { component: 'MapPage', title: 'Hartă' },
+  { component: 'CoordinatesPage', title: 'Coordonate' },
+  { component: 'HistoryPage', title: 'Istorie' },
 ];
 
 const styles = {
@@ -46,7 +46,7 @@ export default class DrawBar extends React.Component {
           </View>
           <List
             dataArray={routes}
-            renderRow={data => {
+            renderRow={(data) => {
               return (
                 <ListItem
                   button

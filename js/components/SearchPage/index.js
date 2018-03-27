@@ -17,9 +17,11 @@ import {
   ListItem,
 } from 'native-base';
 import proj4 from 'proj4';
+import debouncePromise from '../debouncePromise';
 
-import MapPage from '../MapPage';
 import DrawBar from '../DrawBar';
+import MapPage from '../MapPage';
+import CoordinatesPage from '../CoordinatesPage';
 
 import { openDrawer } from '../../actions/drawer';
 import { setSearchText, setSearchResult, setSearchSelected } from '../../actions/search';
@@ -31,6 +33,8 @@ const styles = {
     backgroundColor: '#FBFAFA',
   },
 };
+
+let DrawerNav = null;
 
 class SearchPage extends Component {
   static navigationOptions = {
@@ -51,6 +55,8 @@ class SearchPage extends Component {
   state = {
   };
 
+  searchFetchDebounced = debouncePromise(fetch, 50);
+
   paramsSerialize(params) {
     return Object.keys(params).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key])).join('&'); // eslint-disable-line prefer-template
   }
@@ -67,13 +73,16 @@ class SearchPage extends Component {
       x03: 11,
       x04: 1,
     };
-    const request = await fetch('https://www.cadastru.md/ecadastru/webinfo/wwv_flow.show', {
+    const request = await this.searchFetchDebounced('https://www.cadastru.md/ecadastru/webinfo/wwv_flow.show', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: this.paramsSerialize(params),
     });
+    if (request.bodyUsed) {
+      return [];
+    }
     const response = await request.text();
 
     //
@@ -181,7 +190,7 @@ class SearchPage extends Component {
                   button
                   onPress={() => this.selectHandle(data)}
                 >
-                  <Text>{data.address}</Text>
+                  <Text>{data.address} - {data.key}</Text>
                 </ListItem>
               );
             }}
@@ -209,16 +218,17 @@ const mapStateToProps = state => ({
 
 const SearchPageSwagger = connect(mapStateToProps, bindAction)(SearchPage);
 
-const DrawNav = DrawerNavigator(
+const DrawNav = DrawerNavigator( // eslint-disable-line new-cap
   {
     Home: { screen: SearchPageSwagger },
     MapPage: { screen: MapPage },
+    CoordinatesPage: { screen: CoordinatesPage },
   },
   {
     contentComponent: props => <DrawBar {...props} />,
   }
 );
-let DrawerNav = null;
+
 DrawNav.navigationOptions = ({ navigation }) => {
   DrawerNav = navigation;
   return {

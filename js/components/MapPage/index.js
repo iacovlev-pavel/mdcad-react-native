@@ -7,6 +7,7 @@ import {
   Button,
   Icon,
   Left,
+  Right,
   Body,
   Text,
   Badge,
@@ -30,13 +31,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     zIndex: 10,
-  },
-  controls: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    padding: 15,
-    zIndex: 20,
   },
   searchSelectedMarker: {
   },
@@ -97,6 +91,7 @@ class MapPage extends Component {
       );
     }
 
+    //
     let searchSelectedMarkers = null;
     if (searchSelected && searchSelectedLabels) {
       searchSelectedMarkers = searchSelected.geometry.google.map((coordinate, index) => {
@@ -108,6 +103,19 @@ class MapPage extends Component {
           </Marker>
         );
       });
+    }
+
+    //
+    let labelsButton = null;
+    if (searchSelected) {
+      labelsButton = (
+        <Button
+          transparent
+          onPress={() => { this.setState({ searchSelectedLabels: !searchSelectedLabels }); }}
+        >
+          <Icon name="text" />
+        </Button>
+      );
     }
 
     return (
@@ -124,6 +132,9 @@ class MapPage extends Component {
           <Body>
             <Title>Hartă</Title>
           </Body>
+          <Right>
+            {labelsButton}
+          </Right>
         </Header>
         <View style={styles.container}>
           <MapView
@@ -139,15 +150,6 @@ class MapPage extends Component {
             {searchSelectedPolygon}
             {searchSelectedMarkers}
           </MapView>
-          <View style={styles.controls}>
-            <Button
-              light
-              primary={searchSelectedLabels}
-              onPress={() => { this.setState({ searchSelectedLabels: !searchSelectedLabels }); }}
-            >
-              <Icon name="text" />
-            </Button>
-          </View>
         </View>
       </Container>
     );

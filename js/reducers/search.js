@@ -4,6 +4,7 @@ const initialState = {
   text: '',
   result: [],
   selected: null,
+  history: [],
 };
 
 export default (state, action) => {
@@ -26,9 +27,12 @@ export default (state, action) => {
   }
 
   if (action.type === SET_SEARCH_SELECTED) {
+    const { history } = state;
+    history.push(action.payload);
     return {
       ...state,
       selected: action.payload,
+      history,
     };
   }
   return state;
