@@ -91,7 +91,7 @@ class CoordinatesPage extends Component {
       copyButton = (
         <Button
           transparent
-          onPress={() => { this.copy(); }}
+          onPress={() => this.copy()}
         >
           <Icon name="copy" />
         </Button>

@@ -55,6 +55,10 @@ class SearchPage extends Component {
   state = {
   };
 
+  componentWillMount() {
+    this.props.setSearchSelected(null);
+  }
+
   searchFetchDebounced = debouncePromise(fetch, 50);
 
   paramsSerialize(params) {
@@ -142,12 +146,12 @@ class SearchPage extends Component {
 
   async searchHandle(text) {
     this.props.setSearchText(text);
-    const result = await this.searchFetch(text);
-    this.props.setSearchResult(result);
-  }
-
-  clear() {
-    this.searchHandle('');
+    if (text) {
+      const result = await this.searchFetch(text);
+      this.props.setSearchResult(result);
+    } else {
+      this.props.setSearchResult([]);
+    }
   }
 
   async selectHandle(data) {
@@ -180,7 +184,7 @@ class SearchPage extends Component {
           <Item>
             <Icon active name="search" />
             <Input placeholder="Adresa sau cod cadastral" onChangeText={(data) => { this.searchHandle(data); }}>{searchText}</Input>
-            <Icon button active name="backspace" onPress={() => this.clear()} />
+            <Icon button active name="backspace" onPress={() => this.searchHandle('')} />
           </Item>
           <List
             dataArray={searchResult}
