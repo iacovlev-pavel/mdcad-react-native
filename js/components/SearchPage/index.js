@@ -22,8 +22,8 @@ import debouncePromise from '../debouncePromise';
 import DrawBar from '../DrawBar';
 import MapPage from '../MapPage';
 import CoordinatesPage from '../CoordinatesPage';
+import HistoryPage from '../HistoryPage';
 
-import { openDrawer } from '../../actions/drawer';
 import { setSearchText, setSearchResult, setSearchSelected } from '../../actions/search';
 
 proj4.defs('EPSG:4026', '+proj=tmerc +lat_0=0 +lon_0=28.4 +k=0.9999400000000001 +x_0=200000 +y_0=-5000000 +ellps=GRS80 +units=m +no_defs');
@@ -43,7 +43,6 @@ class SearchPage extends Component {
 
   static propTypes = {
     navigation: React.PropTypes.object,
-    openDrawer: React.PropTypes.func,
     setSearchText: React.PropTypes.func,
     setSearchResult: React.PropTypes.func,
     setSearchSelected: React.PropTypes.func,
@@ -207,7 +206,6 @@ class SearchPage extends Component {
 
 function bindAction(dispatch) {
   return {
-    openDrawer: () => dispatch(openDrawer()),
     setSearchText: data => dispatch(setSearchText(data)),
     setSearchResult: data => dispatch(setSearchResult(data)),
     setSearchSelected: data => dispatch(setSearchSelected(data)),
@@ -227,6 +225,7 @@ const DrawNav = DrawerNavigator( // eslint-disable-line new-cap
     Home: { screen: SearchPageSwagger },
     MapPage: { screen: MapPage },
     CoordinatesPage: { screen: CoordinatesPage },
+    HistoryPage: { screen: HistoryPage },
   },
   {
     contentComponent: props => <DrawBar {...props} />,

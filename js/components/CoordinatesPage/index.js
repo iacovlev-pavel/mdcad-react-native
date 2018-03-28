@@ -82,7 +82,7 @@ class CoordinatesPage extends Component {
       );
     } else {
       listBlock = (
-        <Text>Nici un obiect nu este selectat</Text>
+        <Text>Nici un obiect nu este selectat.</Text>
       );
     }
 
