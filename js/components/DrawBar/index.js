@@ -41,7 +41,7 @@ export default class DrawBar extends React.Component {
             <Image
               square
               style={styles.logoImage}
-              source={require('../../../images/logo_64.png')}
+              source={require('../../../images/icon_64.png')}
             />
           </View>
           <List
