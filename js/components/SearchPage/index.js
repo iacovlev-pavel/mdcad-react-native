@@ -174,7 +174,6 @@ class SearchPage extends Component {
               <Icon active name="menu" />
             </Button>
           </Left>
-
           <Body>
             <Title>Căutare</Title>
           </Body>
@@ -182,8 +181,14 @@ class SearchPage extends Component {
         <Content padder>
           <Item>
             <Icon active name="search" />
-            <Input placeholder="Adresa sau cod cadastral" onChangeText={(data) => { this.searchHandle(data); }}>{searchText}</Input>
-            <Icon button active name="backspace" onPress={() => this.searchHandle('')} />
+            <Input
+              placeholder="Adresa sau cod cadastral"
+              onChangeText={(data) => { this.searchHandle(data); }}
+              onSubmitEditing={() => { this.searchHandle(this.props.searchText); }}
+            >{searchText}</Input>
+            <Button transparent dark onPress={() => this.searchHandle('')} >
+              <Icon name="backspace" />
+            </Button>
           </Item>
           <List
             dataArray={searchResult}

@@ -8,6 +8,8 @@ import {
   Content,
 } from 'native-base';
 
+const packageJson = require('../../../package.json');
+
 const routes = [
   { component: 'Home', title: 'Căutare' },
   { component: 'MapPage', title: 'Hartă' },
@@ -26,6 +28,12 @@ const styles = {
   logoImage: {
     height: 64,
     width: 64,
+  },
+  version: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    padding: 10,
   },
 };
 
@@ -58,6 +66,9 @@ export default class DrawBar extends React.Component {
             }}
           />
         </Content>
+        <View style={styles.version} padder>
+          <Text style={{ color: '#9E9E9E' }}>{packageJson.name} - {packageJson.version}</Text>
+        </View>
       </Container>
     );
   }
