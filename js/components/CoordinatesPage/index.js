@@ -13,10 +13,9 @@ import {
   Text,
   List,
   ListItem,
-  Toast,
 } from 'native-base';
 
-import { StyleSheet, Clipboard } from 'react-native';
+import { StyleSheet, Share } from 'react-native';
 
 const styles = StyleSheet.create({
 });
@@ -34,16 +33,7 @@ class CoordinatesPage extends Component {
   state = {
   };
 
-  copyNotify() {
-    Toast.show({
-      text: 'Copiat în clipboard',
-      position: 'bottom',
-      type: 'success',
-      duration: 3000,
-    });
-  }
-
-  copyText() {
+  shareText() {
     const { searchSelected } = this.props;
     if (!searchSelected) {
       return '';
@@ -52,13 +42,16 @@ class CoordinatesPage extends Component {
     let index = 0;
     return searchSelected.geometry.cadastre.map((coordinate) => {
       index += 1;
-      return `${index < 10 ? '0' + index : '' + index}\t${coordinate[0].toFixed(2)}\t${coordinate[0].toFixed(2)}`; // eslint-disable-line prefer-template
+      return `${index < 10 ? '0' + index : '' + index}\t${coordinate[0].toFixed(2)}\t${coordinate[1].toFixed(2)}`; // eslint-disable-line prefer-template
     }).join('\n');
   }
 
-  copy() {
-    Clipboard.setString(this.copyText());
-    this.copyNotify();
+  share() {
+    const content = {
+      title: 'Coordonate',
+      message: this.shareText(),
+    };
+    Share.share(content);
   }
 
   render() {
@@ -74,7 +67,7 @@ class CoordinatesPage extends Component {
             index += 1;
             return (
               <ListItem>
-                <Text>{index < 10 ? `0${index}` : `${index}`} - {coordinate[0].toFixed(2)} - {coordinate[0].toFixed(2)}</Text>
+                <Text>{index < 10 ? `0${index}` : `${index}`} - {coordinate[0].toFixed(2)} - {coordinate[1].toFixed(2)}</Text>
               </ListItem>
             );
           }}
@@ -86,14 +79,14 @@ class CoordinatesPage extends Component {
       );
     }
 
-    let copyButton = null;
+    let shareButton = null;
     if (searchSelected) {
-      copyButton = (
+      shareButton = (
         <Button
           transparent
-          onPress={() => this.copy()}
+          onPress={() => this.share()}
         >
-          <Icon name="copy" />
+          <Icon name="share" />
         </Button>
       );
     }
@@ -113,7 +106,7 @@ class CoordinatesPage extends Component {
             <Title>Coordonate</Title>
           </Body>
           <Right>
-            {copyButton}
+            {shareButton}
           </Right>
         </Header>
         <Content padder>
