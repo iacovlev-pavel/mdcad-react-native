@@ -16,6 +16,7 @@ import {
   List,
   ListItem,
 } from 'native-base';
+import { View, AsyncStorage, TouchableNativeFeedback } from 'react-native';
 import proj4 from 'proj4';
 import debouncePromise from '../debouncePromise';
 
@@ -24,7 +25,7 @@ import MapPage from '../MapPage';
 import CoordinatesPage from '../CoordinatesPage';
 import HistoryPage from '../HistoryPage';
 
-import { setSearchText, setSearchResult, setSearchSelected } from '../../actions/search';
+import { setSearchText, setSearchResult, setSearchSelected, setSearchHistory } from '../../actions/search';
 
 proj4.defs('EPSG:4026', '+proj=tmerc +lat_0=0 +lon_0=28.4 +k=0.9999400000000001 +x_0=200000 +y_0=-5000000 +ellps=GRS80 +units=m +no_defs');
 
@@ -46,6 +47,7 @@ class SearchPage extends Component {
     setSearchText: React.PropTypes.func,
     setSearchResult: React.PropTypes.func,
     setSearchSelected: React.PropTypes.func,
+    setSearchHistory: React.PropTypes.func,
     searchText: React.PropTypes.string,
     searchResult: React.PropTypes.array,
     searchSelected: React.PropTypes.object,
@@ -54,8 +56,17 @@ class SearchPage extends Component {
   state = {
   };
 
-  componentWillMount() {
+  async componentDidMount() {
     this.props.setSearchSelected(null);
+
+    try {
+      const searchHistory = JSON.parse(await AsyncStorage.getItem('history'));
+      if (searchHistory.length) {
+        this.props.setSearchHistory(searchHistory);
+      }
+    } catch (err) {
+      //
+    }
   }
 
   searchFetchDebounced = debouncePromise(fetch, 50);
@@ -186,9 +197,12 @@ class SearchPage extends Component {
               onChangeText={(data) => { this.searchHandle(data); }}
               onSubmitEditing={() => { this.searchHandle(this.props.searchText); }}
             >{searchText}</Input>
-            <Button transparent dark onPress={() => this.searchHandle('')} >
-              <Icon name="backspace" />
-            </Button>
+            {/* Android only */}
+            <TouchableNativeFeedback onPress={() => this.searchHandle('')} useForeground>
+              <View>
+                <Icon name="backspace" style={{ padding: 5, margin: 0 }} />
+              </View>
+            </TouchableNativeFeedback>
           </Item>
           <List
             dataArray={searchResult}
@@ -214,6 +228,7 @@ function bindAction(dispatch) {
     setSearchText: data => dispatch(setSearchText(data)),
     setSearchResult: data => dispatch(setSearchResult(data)),
     setSearchSelected: data => dispatch(setSearchSelected(data)),
+    setSearchHistory: data => dispatch(setSearchHistory(data)),
   };
 }
 

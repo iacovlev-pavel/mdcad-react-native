@@ -8,15 +8,13 @@ import {
   Button,
   Icon,
   Left,
-  Right,
   Body,
   Text,
   List,
   ListItem,
-  Toast,
 } from 'native-base';
 
-import { StyleSheet, Clipboard } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { setSearchSelected } from '../../actions/search';
 
@@ -31,7 +29,7 @@ class HistoryPage extends Component {
   static propTypes = {
     navigation: React.PropTypes.object,
     setSearchSelected: React.PropTypes.func,
-    searchHistory: React.PropTypes.any,
+    searchHistory: React.PropTypes.array,
   };
 
   state = {
@@ -46,17 +44,11 @@ class HistoryPage extends Component {
   render() {
     const { navigation, searchHistory } = this.props;
 
-    const searchHistoryFiltered = searchHistory.filter(data => data !== null).reverse();
-
-    if (searchHistoryFiltered.length > 19) {
-      searchHistoryFiltered.length = 19;
-    }
-
     let listBlock = null;
-    if (searchHistoryFiltered.length) {
+    if (searchHistory.length) {
       listBlock = (
         <List
-          dataArray={searchHistoryFiltered}
+          dataArray={searchHistory.reverse()}
           renderRow={(data) => {
             return (
               <ListItem

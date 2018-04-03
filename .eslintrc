@@ -8,9 +8,11 @@
         "react-native"
     ],
     "rules": {
-        "no-underscore-dangle": "off",
+        "no-underscore-dangle": 0,
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-        "class-methods-use-this": 0
+        "class-methods-use-this": 0,
+        "react/forbid-prop-types": 0,
+        "react/no-did-mount-set-state": 0
     },
     "settings": {
         "import/resolver": {
@@ -18,5 +20,8 @@
                 "extensions": [".js", ".android.js", ".ios.js"]
             }
         }
+    },
+    "globals": {
+        "fetch": false
     }
 }

@@ -21,3 +21,11 @@ export function setSearchSelected(payload) {
     payload,
   };
 }
+
+export const SET_SEARCH_HISTORY = 'SET_SEARCH_HISTORY';
+export function setSearchHistory(payload) {
+  return {
+    type: SET_SEARCH_HISTORY,
+    payload,
+  };
+}

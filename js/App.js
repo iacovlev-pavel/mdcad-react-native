@@ -1,13 +1,13 @@
-import React, { Component } from "react";
-import { StyleSheet } from "react-native";
-import CodePush from "react-native-code-push";
+import React, { Component } from 'react';
+import { StyleSheet } from 'react-native';
+import CodePush from 'react-native-code-push';
 
-import { Container, Content, Text, View } from "native-base";
-import Modal from "react-native-modalbox";
-import MainStackRouter from "./Routers/MainStackRouter";
-import ProgressBar from "./components/loaders/ProgressBar";
+import { Container, Content, Text, View } from 'native-base';
+import Modal from 'react-native-modalbox';
+import MainStackRouter from './Routers/MainStackRouter';
+import ProgressBar from './components/loaders/ProgressBar';
 
-import theme from "./themes/base-theme";
+import theme from './themes/base-theme';
 
 const styles = StyleSheet.create({
   container: {
@@ -16,12 +16,12 @@ const styles = StyleSheet.create({
     height: null
   },
   modal: {
-    justifyContent: "center",
-    alignItems: "center"
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modal1: {
-    height: 300
-  }
+    height: 300,
+  },
 });
 
 class App extends Component {
@@ -30,7 +30,7 @@ class App extends Component {
     this.state = {
       showDownloadingModal: false,
       showInstalling: false,
-      downloadProgress: 0
+      downloadProgress: 0,
     };
   }
 
@@ -79,18 +79,18 @@ class App extends Component {
               <View
                 style={{
                   flex: 1,
-                  alignSelf: "stretch",
-                  justifyContent: "center",
-                  padding: 20
+                  alignSelf: 'stretch',
+                  justifyContent: 'center',
+                  padding: 20,
                 }}
               >
                 {this.state.showInstalling
                   ? <Text
                       style={{
                         color: theme.brandPrimary,
-                        textAlign: "center",
+                        textAlign: 'center',
                         marginBottom: 15,
-                        fontSize: 15
+                        fontSize: 15,
                       }}
                     >
                       Installing update...
@@ -98,21 +98,21 @@ class App extends Component {
                   : <View
                       style={{
                         flex: 1,
-                        alignSelf: "stretch",
-                        justifyContent: "center",
-                        padding: 20
+                        alignSelf: 'stretch',
+                        justifyContent: 'center',
+                        padding: 20,
                       }}
                     >
                       <Text
                         style={{
                           color: theme.brandPrimary,
-                          textAlign: "center",
+                          textAlign: 'center',
                           marginBottom: 15,
-                          fontSize: 15
+                          fontSize: 15,
                         }}
                       >
                         Downloading update...
-                        {" "}
+                        {' '}
                         {`${parseInt(this.state.downloadProgress, 10)} %`}
                       </Text>
                       <ProgressBar
