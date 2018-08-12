@@ -42,7 +42,7 @@ class CoordinatesPage extends Component {
     let index = 0;
     return searchSelected.geometry.cadastre.map((coordinate) => {
       index += 1;
-      return `${index < 10 ? '0' + index : '' + index}\t${coordinate[0].toFixed(2)}\t${coordinate[1].toFixed(2)}`; // eslint-disable-line prefer-template
+      return `${index < 10 ? '0' + index : '' + index},${coordinate[0].toFixed(2)},${coordinate[1].toFixed(2)}`; // eslint-disable-line prefer-template
     }).join('\n');
   }
 
