@@ -140,6 +140,7 @@ class SearchPage extends Component {
 
     //
     const cadastre = response.substring(10, response.length - 2).split(',').map(coordinates => coordinates.trim().split(' ').map(parseFloat));
+    cadastre.shift();
     const google = cadastre.map((coordinates) => {
       const wgs84Coordinates = proj4('EPSG:4026', 'EPSG:4326', [coordinates[0], coordinates[1]]);
       return {
@@ -147,7 +148,6 @@ class SearchPage extends Component {
         longitude: wgs84Coordinates[0],
       };
     });
-    google.pop();
     return {
       cadastre,
       google,

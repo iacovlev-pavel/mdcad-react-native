@@ -48,7 +48,7 @@ class HistoryPage extends Component {
     if (searchHistory.length) {
       listBlock = (
         <List
-          dataArray={searchHistory.reverse()}
+          dataArray={searchHistory.slice(0).reverse()}
           renderRow={(data) => {
             return (
               <ListItem
