@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "color": "^0.11.3",
-    "lodash": "^4.13.1",
+    "lodash": "^4.17.11",
     "moment": "^2.13.0",
-    "native-base": "2.1.4",
+    "native-base": "^2.12.1",
     "proj4": "^2.4.4",
     "react": "16.0.0-alpha.12",
-    "react-native": "0.45.1",
+    "react-native": "^0.59.9",
     "react-native-code-push": "2.0.1-beta",
     "react-native-easy-grid": "0.1.8",
     "react-native-maps": "^0.20.1",
@@ -26,7 +26,7 @@
     "redux-form": "^6.7.0",
     "redux-persist": "^4.0.0",
     "redux-thunk": "^2.2.0",
-    "remote-redux-devtools": "^0.5.0"
+    "remote-redux-devtools": "^0.5.16"
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
@@ -44,7 +44,7 @@
     "mocha": "^2.5.3",
     "react-test-renderer": "15.3.2",
     "remote-redux-devtools-on-debugger": "^0.7.0",
-    "remotedev-server": "^0.1.2"
+    "remotedev-server": "^0.3.1"
   },
   "keywords": [
     "android",
