@@ -87,7 +87,7 @@ class SearchPage extends Component {
       x03: 11,
       x04: 1,
     };
-    const request = await this.searchFetchDebounced('https://www.cadastru.md/ecadastru/webinfo/wwv_flow.show', {
+    const request = await this.searchFetchDebounced('https://www.cadastru.md/ecadastru/wwv_flow.show', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -129,7 +129,7 @@ class SearchPage extends Component {
       x06: key.substring(7, key.length),
       x07: '',
     };
-    const request = await fetch('https://www.cadastru.md/ecadastru/webinfo/wwv_flow.show', {
+    const request = await fetch('https://www.cadastru.md/ecadastru/wwv_flow.show', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
